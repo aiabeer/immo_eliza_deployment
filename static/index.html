@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImmoEliza Price Predictor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 1rem 3rem rgba(0,0,0,0.2);
+        }
+        .card-header {
+            background: white;
+            border-bottom: none;
+            padding-top: 2rem;
+        }
+        .btn-predict {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn-predict:hover {
+            transform: scale(1.02);
+            color: white;
+        }
+        #result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h1 class="h3 mb-2">🏡 ImmoEliza Price Predictor</h1>
+                        <p class="text-muted">Enter property details to get an instant price estimate</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="predictionForm">
+                            <div class="row g-3">
+                                <!-- Required fields -->
+                                <div class="col-md-6">
+                                    <label for="area" class="form-label">Area (m²)*</label>
+                                    <input type="number" class="form-control" id="area" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="propertyType" class="form-label">Property Type*</label>
+                                    <select class="form-select" id="propertyType" required>
+                                        <option value="HOUSE">House</option>
+                                        <option value="APARTMENT">Apartment</option>
+                                        <option value="OTHERS">Others</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="roomsNumber" class="form-label">Number of Rooms*</label>
+                                    <input type="number" class="form-control" id="roomsNumber" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="zipCode" class="form-label">Zip Code*</label>
+                                    <input type="number" class="form-control" id="zipCode" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="facadesNumber" class="form-label">Number of Facades</label>
+                                    <input type="number" class="form-control" id="facadesNumber" value="2">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="buildingState" class="form-label">Building State</label>
+                                    <select class="form-select" id="buildingState">
+                                        <option value="NEW">New</option>
+                                        <option value="GOOD">Good</option>
+                                        <option value="TO RENOVATE">To Renovate</option>
+                                        <option value="JUST RENOVATED">Just Renovated</option>
+                                        <option value="TO REBUILD">To Rebuild</option>
+                                    </select>
+                                </div>
+
+                                <!-- Optional toggles -->
+                                <div class="col-md-4">
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" id="garden">
+                                        <label class="form-check-label" for="garden">Garden</label>
+                                    </div>
+                                    <div id="gardenAreaGroup" style="display:none;">
+                                        <label for="gardenArea" class="form-label mt-2">Garden Area (m²)</label>
+                                        <input type="number" class="form-control" id="gardenArea">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" id="terrace">
+                                        <label class="form-check-label" for="terrace">Terrace</label>
+                                    </div>
+                                    <div id="terraceAreaGroup" style="display:none;">
+                                        <label for="terraceArea" class="form-label mt-2">Terrace Area (m²)</label>
+                                        <input type="number" class="form-control" id="terraceArea">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check mt-4">
+                                        <input class="form-check-input" type="checkbox" id="equippedKitchen">
+                                        <label class="form-check-label" for="equippedKitchen">Equipped Kitchen</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="swimmingPool">
+                                        <label class="form-check-label" for="swimmingPool">Swimming Pool</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="furnished">
+                                        <label class="form-check-label" for="furnished">Furnished</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="openFire">
+                                        <label class="form-check-label" for="openFire">Open Fire</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-predict btn-lg">Predict Price</button>
+                            </div>
+                        </form>
+
+                        <div id="result" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show/hide garden area field
+        document.getElementById('garden').addEventListener('change', function() {
+            document.getElementById('gardenAreaGroup').style.display = this.checked ? 'block' : 'none';
+        });
+        document.getElementById('terrace').addEventListener('change', function() {
+            document.getElementById('terraceAreaGroup').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Handle form submission
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Build the JSON payload matching the API schema
+            const payload = {
+                area: parseInt(document.getElementById('area').value),
+                "property-type": document.getElementById('propertyType').value,
+                "rooms-number": parseInt(document.getElementById('roomsNumber').value),
+                "zip-code": parseInt(document.getElementById('zipCode').value),
+                "facades-number": parseInt(document.getElementById('facadesNumber').value),
+                "building-state": document.getElementById('buildingState').value,
+                garden: document.getElementById('garden').checked,
+                "garden-area": document.getElementById('garden').checked ? parseInt(document.getElementById('gardenArea').value) || 0 : 0,
+                terrace: document.getElementById('terrace').checked,
+                "terrace-area": document.getElementById('terrace').checked ? parseInt(document.getElementById('terraceArea').value) || 0 : 0,
+                "equipped-kitchen": document.getElementById('equippedKitchen').checked,
+                "swimming-pool": document.getElementById('swimmingPool').checked,
+                furnished: document.getElementById('furnished').checked,
+                "open-fire": document.getElementById('openFire').checked
+            };
+
+            // Show loading message
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="alert alert-info">Predicting...</div>';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    const price = data.prediction.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                    resultDiv.innerHTML = `<div class="alert alert-success text-center">💰 Estimated Price: €${price}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${data.detail || 'Something went wrong'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="alert alert-danger">Request failed: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
