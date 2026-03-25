@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+lightgbm
+optuna
+joblib
+optuna
+pydantic
+python-multipart
+xgboost
+fastapi

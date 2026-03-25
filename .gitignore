@@ -1,0 +1,25 @@
+data/*.csv
+data/combine_cleaning.ipynb
+data/combine.py
+model/__pycache__/
+__pycache__/
+predict/__pycache__/
+preprocessing/__pycache__/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE files (optional)
+.vscode/
+.idea/
+
+# Data files (if applicable)
+data/*.csv
+*.ipynb
