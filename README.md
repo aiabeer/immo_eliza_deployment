@@ -38,3 +38,5 @@ Receives a JSON with house details and returns a price prediction.
     ]
   }
 }
+
+https://immo-eliza-deployment-qk51.onrender.com
